@@ -1,7 +1,9 @@
 import fs from "fs";
 import path from "path";
 import Papa from "papaparse";
+
 let cachedData = null;
+
 export async function GET(req) {
     if (!cachedData) {
         const filePath = path.join(process.cwd(), "public", "users.csv");
@@ -26,4 +28,4 @@ return new Response(JSON.stringify({
 }), {
     headers: { "Content-Type": "application/json" },
 });
-}
+
