@@ -11,21 +11,20 @@ export async function GET(req) {
         const { data } = Papa.parse(file, { header: true });
         cachedData = data; 
     }
-    return cachedData;
+
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
+    const start = (page - 1) * limit;
+    const end = start + limit;
+
+    return new Response(JSON.stringify({
+        users: cachedData.slice(start, end),
+        total: cachedData.length,
+        page,
+        pages: Math.ceil(cachedData.length / limit)
+    }), {
+        headers: { "Content-Type": "application/json" },
+    });
 }
-
-const { searchParams } = new URL(req.url);
-const page = parseInt(searchParams.get("page") || "1");
-const limit = parseInt(searchParams.get("limit") || "20");
-const start = (page - 1) * limit;
-const end = start + limit;
-
-return new Response(JSON.stringify({
-    users: data.slice(start, end),
-    total: data.length,
-    page,
-    pages: Math.ceil(data.length / limit)
-}), {
-    headers: { "Content-Type": "application/json" },
-});
 
